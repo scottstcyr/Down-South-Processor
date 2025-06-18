@@ -1,4 +1,5 @@
 import { HelloTask } from './HelloTask';
+import { DSOrderProcessingTask } from './DSOrderProcessingTask';
 
 /**
  * Task definition interface
@@ -20,6 +21,12 @@ export const AVAILABLE_TASKS: Record<string, TaskDefinition> = {
     description: "Logs 'Hi' every minute for testing",
     cronExpression: "* * * * *", // Every minute
     taskFunction: HelloTask
+  },
+  "ds-order-processing": {
+    name: "DS Order Processing",
+    description: "Process Down South order HTML files every minute",
+    cronExpression: "* * * * *", // Every minute
+    taskFunction: DSOrderProcessingTask
   }
   // TODO: Add more tasks as needed
   // "shopify-sync": {

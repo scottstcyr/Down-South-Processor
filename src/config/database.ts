@@ -3,6 +3,8 @@ import { config } from "dotenv";
 import { VaultEntry } from "../entities/VaultEntry";
 import { log } from "../utils/logger";
 import { LogEntry } from "../entities/LogEntry";
+import { DSOrder } from "../entities/DSOrder";
+import { DSOrderDetail } from "../entities/DSOrderDetail";
 
 // Load environment variables
 config();
@@ -16,7 +18,7 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_DATABASE ?? "DATABASE NOT SET",
     synchronize: false, // Set to false in production
     logging: ["error"],
-    entities: [VaultEntry, LogEntry],
+    entities: [VaultEntry, LogEntry, DSOrder, DSOrderDetail],
     options: {
         encrypt: true,
         trustServerCertificate: true,

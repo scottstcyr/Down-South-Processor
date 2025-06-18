@@ -6,6 +6,7 @@ This is a TypeScript NodeJS application template that provides a robust foundati
 
 - **TypeScript**: Latest version with strict typing
 - **Database Integration**: TypeORM with MSSQL support
+- **HTML Processing**: DS Order Processing system for automated data extraction
 - **API Integration**: Shopify GraphQL API (easily replaceable)
 - **Task Scheduling**: Built-in cron-based task scheduling
 - **CLI Interface**: Commander.js with robust command structure
@@ -83,7 +84,35 @@ DB_DATABASE=your-database
 SHOPIFY_DOMAIN=your-store.myshopify.com
 SHOPIFY_ACCESS_TOKEN=your-access-token
 SHOPIFY_API_VERSION=2025-01
+
+# DS Order Processing Configuration
+DS_ORDER_INPUT_FOLDER=./input/unprocessed
+DS_ORDER_PROCESSED_FOLDER=./input/processed
+DS_ORDER_FAILED_FOLDER=./input/failed
 ```
+
+### DS Order Processing
+
+This template includes a complete DS Order Processing system for automatically extracting order information from HTML files:
+
+```bash
+# Create required directories
+mkdir -p input/unprocessed input/processed input/failed
+
+# Start the DS Order Processing task
+npm run dev -- start ds-order-processing
+
+# Place order*.html files in input/unprocessed/ for automatic processing
+```
+
+**Features:**
+- Automatic HTML parsing and data extraction
+- Database storage with relational tables (DSOrders/DSOrderDetails)
+- Flattened CSV output to console
+- File management (processed/failed folder organization)
+- Duplicate prevention and error handling
+
+See `/documentation/DSOrderProcessing.md` for detailed setup and usage instructions.
 
 ## 📚 Using This Template
 
