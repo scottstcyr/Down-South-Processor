@@ -1,7 +1,8 @@
+import { ILogEntry } from '../utils/logger';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity('ELogEntry')
-export class LogEntry {
+export class LogEntry implements ILogEntry {
   @PrimaryGeneratedColumn()
   id!: number;
 

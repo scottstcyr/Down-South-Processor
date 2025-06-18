@@ -2,7 +2,7 @@
 
 import { config } from 'dotenv';
 import { program } from './cli';
-import { log } from './utils/logger';
+import { logger } from './utils/logger';
 import 'reflect-metadata';
 
 // Load environment variables
@@ -10,12 +10,12 @@ config();
 
 // Configure process-level error handling
 process.on('uncaughtException', (error) => {
-  log.error('Uncaught Exception:', error);
+  logger.error('Uncaught Exception:', error);
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  log.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
   process.exit(1);
 });
 
@@ -24,7 +24,7 @@ async function main() {
   try {
     await program.parseAsync(process.argv);
   } catch (error) {
-    log.error('Application error:', error);
+    logger.error('Application error:', error);
     process.exit(1);
   }
 }

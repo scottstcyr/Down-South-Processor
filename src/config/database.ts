@@ -1,7 +1,7 @@
 import { DataSource } from "typeorm";
 import { config } from "dotenv";
 import { VaultEntry } from "../entities/VaultEntry";
-import { log } from "../utils/logger";
+import { logger } from "../utils/logger";
 import { LogEntry } from "../entities/LogEntry";
 import { DSOrder } from "../entities/DSOrder";
 import { DSOrderDetail } from "../entities/DSOrderDetail";
@@ -28,9 +28,9 @@ export const AppDataSource = new DataSource({
 export const initializeDatabase = async (): Promise<void> => {
     try {
         await AppDataSource.initialize();
-        log.info("Database connection established");
+        logger.info("Database connection established");
     } catch (error) {
-        log.error("Error connecting to database:", error);
+        logger.error("Error connecting to database:", error);
         throw error;
     }
 };

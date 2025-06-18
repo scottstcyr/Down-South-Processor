@@ -1,7 +1,7 @@
 import { parseNamedParameters } from "../utils/utils";
 import { AppDataSource } from "../config/database";
 import { VaultEntry } from "../entities/VaultEntry";
-import { log } from "../utils/logger";
+import { logger } from "../utils/logger";
 
 export class Vault {
     private static instance: Vault;
@@ -32,20 +32,20 @@ export class Vault {
         // 3. Check local cache
         const cachedValue = this.cache.get(key);
         if (cachedValue !== undefined) {
-            log.temp(`Vault: Found key '${key}' in local cache`);
+            logger.temp(`Vault: Found key '${key}' in local cache`);
             return cachedValue;
         }
 
         // 1. Check startup parameters first
         if (this.startupParams[key] !== undefined) {
-            log.temp(`Vault: Found key '${key}' in startup parameters`);
+            logger.temp(`Vault: Found key '${key}' in startup parameters`);
             return this.startupParams[key];
         }
 
         // 2. Check environment variables
         const envValue = process.env[key];
         if (envValue !== undefined) {
-            log.temp(`Vault: Found key '${key}' in environment variables`);
+            logger.temp(`Vault: Found key '${key}' in environment variables`);
             return envValue;
         }
 
@@ -59,17 +59,17 @@ export class Vault {
             const entry = await repository.findOne({ where: { key } });
             
             if (entry && entry.value !== undefined) {
-                log.temp(`Vault: Found key '${key}' in database`);
+                logger.temp(`Vault: Found key '${key}' in database`);
                 // Cache the value for future reads
                 this.cache.set(key, entry.value);
                 return entry.value;
             }
         } catch (error) {
-            log.error(`Vault: Error reading from database for key '${key}': ${error}`);
+            logger.error(`Vault: Error reading from database for key '${key}': ${error}`);
             // Fall through to return undefined
         }
 
-        log.info(`Vault: Key '${key}' not found in any source`);
+        logger.info(`Vault: Key '${key}' not found in any source`);
         return undefined;
     }
 
@@ -90,9 +90,9 @@ export class Vault {
             // Update the cache with the new value
             this.cache.set(key, value);
             
-            log.debug(`Vault: Successfully wrote key '${key}' to database and cache`);
+            logger.debug(`Vault: Successfully wrote key '${key}' to database and cache`);
         } catch (error) {
-            log.error(`Vault: Error writing to database for key '${key}': ${error}`);
+            logger.error(`Vault: Error writing to database for key '${key}': ${error}`);
             throw error;
         }
     }
@@ -111,10 +111,10 @@ export class Vault {
             // Remove from cache regardless of database result to ensure consistency
             this.cache.delete(key);
             
-            log.debug(`Vault: Delete key '${key}' - existed: ${existed}, removed from cache`);
+            logger.debug(`Vault: Delete key '${key}' - existed: ${existed}, removed from cache`);
             return existed;
         } catch (error) {
-            log.error(`Vault: Error deleting from database for key '${key}': ${error}`);
+            logger.error(`Vault: Error deleting from database for key '${key}': ${error}`);
             throw error;
         }
     }
@@ -124,7 +124,7 @@ export class Vault {
      */
     public clearCache(): void {
         this.cache.clear();
-        log.debug(`Vault: Local cache cleared`);
+        logger.debug(`Vault: Local cache cleared`);
     }
 
     /**

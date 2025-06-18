@@ -1,4 +1,4 @@
-import { log } from './logger';
+import { logger } from './logger';
 
 export interface RetryOptions {
   maxAttempts?: number;
@@ -41,14 +41,14 @@ export async function withRetry<T>(
       const result = await operation();
       
       if (attempt > 1) {
-        log.info(`Operation succeeded on attempt ${attempt}`);
+        logger.info(`Operation succeeded on attempt ${attempt}`);
       }
       
       return result;
     } catch (error) {
       lastError = error;
       
-      log.warn(`Attempt ${attempt} failed:`, {
+      logger.warn(`Attempt ${attempt} failed:`, {
         error: error instanceof Error ? error.message : String(error),
         attempt,
         maxAttempts: opts.maxAttempts
@@ -61,7 +61,7 @@ export async function withRetry<T>(
       
       // Don't retry if the error doesn't match retry conditions
       if (!opts.retryCondition(error)) {
-        log.info('Error does not match retry conditions, giving up');
+        logger.info('Error does not match retry conditions, giving up');
         break;
       }
       
@@ -71,12 +71,12 @@ export async function withRetry<T>(
         opts.maxDelay
       );
       
-      log.info(`Retrying in ${delay}ms... (attempt ${attempt + 1}/${opts.maxAttempts})`);
+      logger.info(`Retrying in ${delay}ms... (attempt ${attempt + 1}/${opts.maxAttempts})`);
       await sleep(delay);
     }
   }
   
-  log.error(`Operation failed after ${opts.maxAttempts} attempts`);
+  logger.error(`Operation failed after ${opts.maxAttempts} attempts`);
   throw lastError;
 }
 

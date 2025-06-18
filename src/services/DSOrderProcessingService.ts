@@ -4,7 +4,7 @@ import { AppDataSource } from '../config/database';
 import { DSOrder } from '../entities/DSOrder';
 import { DSOrderDetail } from '../entities/DSOrderDetail';
 import { DSOrderParser, ParsedOrderData } from './DSOrderParser';
-import { log } from '../utils/logger';
+import { logger } from '../utils/logger';
 
 export class DSOrderProcessingService {
     private inputFolder: string;
@@ -32,17 +32,17 @@ export class DSOrderProcessingService {
             );
 
             if (orderFiles.length === 0) {
-                log.info('No order files found to process');
+                logger.info('No order files found to process');
                 return;
             }
 
-            log.info(`Found ${orderFiles.length} order file(s) to process`);
+            logger.info(`Found ${orderFiles.length} order file(s) to process`);
 
             for (const filename of orderFiles) {
                 await this.processSingleFile(filename);
             }
         } catch (error) {
-            log.error('Error processing order files:', error);
+            logger.error('Error processing order files:', error);
         }
     }
 
@@ -54,7 +54,7 @@ export class DSOrderProcessingService {
         let parsedData: ParsedOrderData | null = null;
 
         try {
-            log.info(`Processing file: ${filename}`);
+            logger.info(`Processing file: ${filename}`);
 
             // Parse the HTML file
             parsedData = await DSOrderParser.parseOrderFile(filePath);
@@ -73,10 +73,10 @@ export class DSOrderProcessingService {
             // Move file to processed folder
             await this.moveFileToProcessed(filePath, filename);
 
-            log.info(`Successfully processed order ${parsedData.order.OrderNumber}`);
+            logger.info(`Successfully processed order ${parsedData.order.OrderNumber}`);
 
         } catch (error) {
-            log.error(`Failed to process file ${filename}:`, error);
+            logger.error(`Failed to process file ${filename}:`, error);
             
             // Move file to failed folder
             await this.moveFileToFailed(filePath, filename);
@@ -101,7 +101,7 @@ export class DSOrderProcessingService {
             });
 
             if (existingOrder) {
-                log.info(`Order ${parsedData.order.OrderNumber} already exists, skipping database insert`);
+                logger.info(`Order ${parsedData.order.OrderNumber} already exists, skipping database insert`);
                 await queryRunner.rollbackTransaction();
                 return;
             }
@@ -114,7 +114,7 @@ export class DSOrderProcessingService {
 
             await queryRunner.commitTransaction();
             
-            log.info(`Saved order ${parsedData.order.OrderNumber} to database`);
+            logger.info(`Saved order ${parsedData.order.OrderNumber} to database`);
 
         } catch (error) {
             await queryRunner.rollbackTransaction();
@@ -189,7 +189,7 @@ export class DSOrderProcessingService {
             console.log('=== END CSV OUTPUT ===\n');
 
         } catch (error) {
-            log.error('Error outputting CSV:', error);
+            logger.error('Error outputting CSV:', error);
         }
     }
 
@@ -233,7 +233,7 @@ export class DSOrderProcessingService {
         for (const dir of directories) {
             if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir, { recursive: true });
-                log.info(`Created directory: ${dir}`);
+                logger.info(`Created directory: ${dir}`);
             }
         }
     }

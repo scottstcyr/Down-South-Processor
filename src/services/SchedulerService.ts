@@ -1,5 +1,5 @@
 import * as cron from 'node-cron';
-import { log } from '../utils/logger';
+import { logger } from '../utils/logger';
 import { TaskDefinition } from '../tasks';
 
 export interface ScheduledTaskInfo {
@@ -16,7 +16,7 @@ export class SchedulerService {
   private isStarted: boolean = false;
 
   constructor() {
-    log.info('SchedulerService initialized');
+    logger.info('SchedulerService initialized');
   }
 
   /**
@@ -24,7 +24,7 @@ export class SchedulerService {
    */
   scheduleTask(taskName: string, taskDefinition: TaskDefinition): void {
     if (this.scheduledTasks.has(taskName)) {
-      log.warn(`Task ${taskName} is already scheduled`);
+      logger.warn(`Task ${taskName} is already scheduled`);
       return;
     }
 
@@ -33,7 +33,7 @@ export class SchedulerService {
       throw new Error(`Invalid cron expression for task ${taskName}: ${taskDefinition.cronExpression}`);
     }
 
-    log.info(`Scheduling task: ${taskName}`, {
+    logger.info(`Scheduling task: ${taskName}`, {
       description: taskDefinition.description,
       cronExpression: taskDefinition.cronExpression
     });
@@ -55,7 +55,7 @@ export class SchedulerService {
     };
 
     this.scheduledTasks.set(taskName, taskInfo);
-    log.info(`Task ${taskName} scheduled successfully`);
+    logger.info(`Task ${taskName} scheduled successfully`);
   }
 
   /**
@@ -82,19 +82,19 @@ export class SchedulerService {
    */
   start(): void {
     if (this.isStarted) {
-      log.warn('SchedulerService is already started');
+      logger.warn('SchedulerService is already started');
       return;
     }
 
-    log.info(`Starting SchedulerService with ${this.scheduledTasks.size} scheduled tasks`);
+    logger.info(`Starting SchedulerService with ${this.scheduledTasks.size} scheduled tasks`);
 
     this.scheduledTasks.forEach((taskInfo, taskName) => {
       taskInfo.cronTask.start();
-      log.info(`Started task: ${taskName}`);
+      logger.info(`Started task: ${taskName}`);
     });
 
     this.isStarted = true;
-    log.info('SchedulerService started successfully');
+    logger.info('SchedulerService started successfully');
   }
 
   /**
@@ -102,19 +102,19 @@ export class SchedulerService {
    */
   stop(): void {
     if (!this.isStarted) {
-      log.warn('SchedulerService is not started');
+      logger.warn('SchedulerService is not started');
       return;
     }
 
-    log.info('Stopping SchedulerService');
+    logger.info('Stopping SchedulerService');
 
     this.scheduledTasks.forEach((taskInfo, taskName) => {
       taskInfo.cronTask.stop();
-      log.info(`Stopped task: ${taskName}`);
+      logger.info(`Stopped task: ${taskName}`);
     });
 
     this.isStarted = false;
-    log.info('SchedulerService stopped successfully');
+    logger.info('SchedulerService stopped successfully');
   }
 
   /**
@@ -123,12 +123,12 @@ export class SchedulerService {
   private async executeTask(taskName: string, taskDefinition: TaskDefinition): Promise<void> {
     const taskInfo = this.scheduledTasks.get(taskName);
     if (!taskInfo) {
-      log.error(`Task info not found for: ${taskName}`);
+      logger.error(`Task info not found for: ${taskName}`);
       return;
     }
 
     if (taskInfo.isRunning) {
-      log.warn(`Task ${taskName} is already running, skipping execution`);
+      logger.warn(`Task ${taskName} is already running, skipping execution`);
       return;
     }
 
@@ -136,11 +136,11 @@ export class SchedulerService {
       taskInfo.isRunning = true;
       taskInfo.lastRun = new Date();
       
-      log.info(`Executing task: ${taskName}`);
+      logger.info(`Executing task: ${taskName}`);
       await taskDefinition.taskFunction();
-      log.info(`Task completed successfully: ${taskName}`);
+      logger.info(`Task completed successfully: ${taskName}`);
     } catch (error) {
-      log.error(`Task failed: ${taskName}`, error);
+      logger.error(`Task failed: ${taskName}`, error);
     } finally {
       taskInfo.isRunning = false;
     }
@@ -193,7 +193,7 @@ export class SchedulerService {
 
     taskInfo.cronTask.stop();
     this.scheduledTasks.delete(taskName);
-    log.info(`Removed task: ${taskName}`);
+    logger.info(`Removed task: ${taskName}`);
     return true;
   }
 

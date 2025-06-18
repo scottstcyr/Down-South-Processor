@@ -1,6 +1,6 @@
 import { ShopifyGraphQLResponse, ShopifyTenderTransaction } from '../types/ShopifyTypes';
 import { withRetry, shopifyRetryOptions } from '../utils/retry';
-import { log } from '../utils/logger';
+import { logger } from '../utils/logger';
 
 export interface ShopifyConfig {
   domain: string;

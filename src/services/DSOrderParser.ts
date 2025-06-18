@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { JSDOM } from 'jsdom';
-import { log } from '../utils/logger';
+import { logger } from '../utils/logger';
 import { DSOrder } from '../entities/DSOrder';
 import { DSOrderDetail } from '../entities/DSOrderDetail';
 
@@ -33,7 +33,7 @@ export class DSOrderParser {
 
             return { order, orderDetails };
         } catch (error) {
-            log.error(`Error parsing order file ${filePath}:`, error);
+            logger.error(`Error parsing order file ${filePath}:`, error);
             throw error;
         }
     }
@@ -88,7 +88,7 @@ export class DSOrderParser {
 
             return order;
         } catch (error) {
-            log.error('Error extracting order header:', error);
+            logger.error('Error extracting order header:', error);
             throw error;
         }
     }
@@ -144,7 +144,7 @@ export class DSOrderParser {
 
             return orderDetails;
         } catch (error) {
-            log.error('Error extracting order details:', error);
+            logger.error('Error extracting order details:', error);
             throw error;
         }
     }
@@ -193,7 +193,7 @@ export class DSOrderParser {
 
             return detail;
         } catch (error) {
-            log.error('Error parsing order detail row:', error);
+            logger.error('Error parsing order detail row:', error);
             return null;
         }
     }
